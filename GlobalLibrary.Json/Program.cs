@@ -42,3 +42,7 @@ engine.Execute("""
                }
                """);
 Util.Print(obj2, "(14)");
+var ary2 = Util.FromJson("['a', 'b', null]");
+Util.Print(Util.FullName(ary2[2]), "(15)");
+var ary3 = Util.FromNewton(ary2);
+Util.Print(Util.FullName(ary3[2]), "(16)");
