@@ -32,6 +32,14 @@ public partial class Util
     static Util()
     {
     }
+    public static uint SessionId()
+    {
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            return NativeMethods.WTSGetActiveConsoleSessionId();
+        }
+        return 0;
+    }
     public static List<string> SplitTextIntoLines(string text)
     {
         List<string> lines = new List<string>();
@@ -921,5 +929,7 @@ public partial class Util
         //internal static extern bool FreeConsole();
         [DllImport("kernel32.dll")]
         internal static extern uint GetConsoleCP();
+        [DllImport("kernel32.dll")]
+        internal static extern uint WTSGetActiveConsoleSessionId();
     }
 }
