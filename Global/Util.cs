@@ -32,6 +32,21 @@ public partial class Util
     static Util()
     {
     }
+    public static List<string> SplitTextIntoLines(string text)
+    {
+        List<string> lines = new List<string>();
+        if (text is null) return lines;
+        using (StringReader sr = new StringReader(text))
+        {
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                // do something
+                lines.Add(line);
+            }
+        }
+        return lines;
+    }
     public static string DateTimeString(DateTime x)
     {
         return x.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
