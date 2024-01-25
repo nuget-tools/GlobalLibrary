@@ -19,6 +19,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PeterO.Cbor;
 
 //using Formatting = Newtonsoft.Json.Formatting;
 
@@ -32,6 +33,102 @@ public partial class Util
     static Util()
     {
     }
+    public static dynamic? FromCborObject(CBORObject? x)
+    {
+        return FromCborObjectHelper(x);
+    }
+    private static dynamic? FromCborObjectHelper(CBORObject? x)
+    {
+        if (x is null) return null;
+        if (x == CBORObject.Null) return null;
+        if (x.Type == CBORType.Boolean)
+        {
+            return x.AsBoolean();
+        }
+        else if (x.Type == CBORType.ByteString)
+        {
+            return x.GetByteString();
+        }
+        else if (x.Type == CBORType.TextString)
+        {
+            return x.AsString();
+        }
+        else if (x.Type == CBORType.Array)
+        {
+            var result = new JArray();
+            for (int i = 0; i < x.Count; i++)
+            {
+                result.Add(FromCborObjectHelper(x[i]));
+            }
+            return result;
+        }
+        else if (x.Type == CBORType.Map)
+        {
+            var result = new JObject();
+            var keys = x.Keys;
+            //for (int i = 0; i < keys.Count; i++)
+            foreach(var key in keys)
+            {
+                //var key = keys.ElementAt<string>(i);
+                result[key.AsString()] = FromCborObjectHelper(x[key]);
+            }
+            return result;
+        }
+        else if (x.Type == CBORType.Integer)
+        {
+            return x.AsInt64Value();
+        }
+        else if (x.Type == CBORType.FloatingPoint)
+        {
+            return x.AsDoubleValue();
+        }
+        //Util.Print(x.Type, "x.Type");
+        return null;
+    }
+    public static dynamic? ToCborObject(dynamic? x)
+    {
+        var newton = FromObject(x);
+        return ToCborObjectHelper(x);
+    }
+    private static CBORObject? ToCborObjectHelper(dynamic? x)
+    {
+        if (x is null) return CBORObject.Null;
+        if (x is JValue)
+        {
+            Util.Print("<JValue>");
+            Util.Print(x, "x");
+            var result = JValueToCborObject((x as JValue)!);
+            Util.Print(result.Type);
+            return result;
+        }
+        else if (x is JArray)
+        {
+            Util.Print("<JArray>");
+            var result = CBORObject.NewArray();
+            for (int i=0; i< x.Count; i++)
+            {
+                result.Add(ToCborObjectHelper(x[i]));
+            }
+            return result;
+        }
+        Util.Print(Util.FullName(x));
+        return CBORObject.FromObject(Util.FullName(x));
+    }
+    private static CBORObject? JValueToCborObject(JValue x)
+    {
+        object value = x.Value!;
+        //return CBORObject.Null;
+        if (value is System.Decimal)
+        {
+            return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
+        }
+        if (value is System.String)
+        {
+            return CBORObject.FromObject((System.String)value);
+        }
+        return CBORObject.FromObject(Util.FullName(value));
+    }
+
     public static uint SessionId()
     {
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)

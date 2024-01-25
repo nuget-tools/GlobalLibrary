@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalLibrary.Script", "Glo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalLibrary.Json", "GlobalLibrary.Json\GlobalLibrary.Json.csproj", "{2C3E0A73-073F-48D7-9D73-0E1555AF3AD9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalLibrary.Cbor", "GlobalLibrary.Cbor\GlobalLibrary.Cbor.csproj", "{B0CF1FAD-8FA9-4529-95C1-83F93D1E5A58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,8 +41,15 @@ Global
 		{2C3E0A73-073F-48D7-9D73-0E1555AF3AD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C3E0A73-073F-48D7-9D73-0E1555AF3AD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3E0A73-073F-48D7-9D73-0E1555AF3AD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0CF1FAD-8FA9-4529-95C1-83F93D1E5A58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0CF1FAD-8FA9-4529-95C1-83F93D1E5A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0CF1FAD-8FA9-4529-95C1-83F93D1E5A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0CF1FAD-8FA9-4529-95C1-83F93D1E5A58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE7E42AE-F9EF-4C02-9A53-41F6AB68E3CB}
 	EndGlobalSection
 EndGlobal
