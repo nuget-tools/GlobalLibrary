@@ -67,7 +67,7 @@ public partial class Util
             var result = new JObject();
             var keys = x.Keys;
             //for (int i = 0; i < keys.Count; i++)
-            foreach(var key in keys)
+            foreach (var key in keys)
             {
                 //var key = keys.ElementAt<string>(i);
                 result[key.AsString()] = FromCborObjectHelper(x[key]);
@@ -76,7 +76,10 @@ public partial class Util
         }
         else if (x.Type == CBORType.Integer)
         {
-            return x.AsInt64Value();
+            var dec = x.AsDecimal();
+            if (dec >= 9223372036854775807)
+                return x.AsUInt64();
+            return x.AsInt64();
         }
         else if (x.Type == CBORType.FloatingPoint)
         {
@@ -125,19 +128,35 @@ public partial class Util
             return result;
         }
         Util.Print(Util.FullName(x));
-        return CBORObject.FromObject(Util.FullName(x));
+        return CBORObject.FromObject($"ToCborObject(): {Util.FullName(x)}");
     }
     private static CBORObject? JValueToCborObject(JValue x)
     {
         object value = x.Value!;
-        //return CBORObject.Null;
+        if (x.Value is null) return CBORObject.Null;
         if (value is System.Boolean)
         {
             return CBORObject.FromObject((System.Boolean)value);
         }
         else if (value is System.Decimal)
         {
-            return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
+            var dec = (System.Decimal)value;
+            if (dec.ToString().Contains("."))
+            {
+                return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
+            }
+            else
+            {
+                if (dec >= -9223372036854775808 && dec <= 9223372036854775807)
+                {
+                    return CBORObject.FromObject((long)dec);
+                }
+                else if (dec >= 9223372036854775808 && dec <= 18446744073709551615)
+                {
+                    return CBORObject.FromObject((ulong)dec);
+                }
+                return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
+            }
         }
         else if (value is System.String)
         {
@@ -151,7 +170,7 @@ public partial class Util
         {
             return CBORObject.FromObject((System.DateTime)value);
         }
-        return CBORObject.FromObject(Util.FullName(value));
+        return CBORObject.FromObject($"JValueToCborObject(): {Util.FullName(value)}");
     }
 
     public static uint SessionId()
@@ -1042,7 +1061,7 @@ public partial class Util
         {
             var result = new List<object>();
             var ary = (JArray)x;
-            foreach(var elem in ary)
+            foreach (var elem in ary)
             {
                 result.Add(FromNewtonHelper(elem));
             }
