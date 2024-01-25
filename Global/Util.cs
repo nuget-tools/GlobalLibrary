@@ -119,11 +119,8 @@ public partial class Util
             var enumerator = o.GetEnumerator();
             while (enumerator.MoveNext())
             {
+                Util.Print(enumerator.Current.Key, "enumerator.Current.Key");
                 result[enumerator.Current.Key] = ToCborObjectHelper(enumerator.Current.Value);
-            }
-            for (int i = 0; i < x.Count; i++)
-            {
-                result.Add(ToCborObjectHelper(x[i]));
             }
             return result;
         }
