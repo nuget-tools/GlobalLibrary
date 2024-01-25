@@ -33,11 +33,23 @@ public partial class Util
     static Util()
     {
     }
-    public static dynamic? FromCborObject(CBORObject? x)
+    public static dynamic? FromCbor(byte[] bytes)
     {
-        return FromCborObjectHelper(x);
+        var o1 = CBORObject.DecodeFromBytes(bytes);
+        var o2 = __FromCborObject(o1);
+        return o2;
     }
-    private static dynamic? FromCborObjectHelper(CBORObject? x)
+    public static byte[] ToCbor(dynamic? x)
+    {
+        var o1 = __ToCborObject(x);
+        var bytes = o1.ToBytes();
+        return bytes;
+    }
+    public static dynamic? __FromCborObject(CBORObject? x)
+    {
+        return __FromCborObjectHelper(x);
+    }
+    private static dynamic? __FromCborObjectHelper(CBORObject? x)
     {
         if (x is null) return null;
         if (x == CBORObject.Null) return null;
@@ -58,7 +70,7 @@ public partial class Util
             var result = new JArray();
             for (int i = 0; i < x.Count; i++)
             {
-                result.Add(FromCborObjectHelper(x[i]));
+                result.Add(__FromCborObjectHelper(x[i]));
             }
             return result;
         }
@@ -70,7 +82,7 @@ public partial class Util
             foreach (var key in keys)
             {
                 //var key = keys.ElementAt<string>(i);
-                result[key.AsString()] = FromCborObjectHelper(x[key]);
+                result[key.AsString()] = __FromCborObjectHelper(x[key]);
             }
             return result;
         }
@@ -88,12 +100,12 @@ public partial class Util
         //Util.Print(x.Type, "x.Type");
         return null;
     }
-    public static dynamic? ToCborObject(dynamic? x)
+    public static dynamic? __ToCborObject(dynamic? x)
     {
         var newton = FromObject(x);
-        return ToCborObjectHelper(x);
+        return __ToCborObjectHelper(x);
     }
-    private static CBORObject? ToCborObjectHelper(dynamic? x)
+    private static CBORObject? __ToCborObjectHelper(dynamic? x)
     {
         if (x is null) return CBORObject.Null;
         if (x is JValue)
@@ -110,7 +122,7 @@ public partial class Util
             var result = CBORObject.NewArray();
             for (int i = 0; i < x.Count; i++)
             {
-                result.Add(ToCborObjectHelper(x[i]));
+                result.Add(__ToCborObjectHelper(x[i]));
             }
             return result;
         }
@@ -123,7 +135,7 @@ public partial class Util
             while (enumerator.MoveNext())
             {
                 Util.Print(enumerator.Current.Key, "enumerator.Current.Key");
-                result[enumerator.Current.Key] = ToCborObjectHelper(enumerator.Current.Value);
+                result[enumerator.Current.Key] = __ToCborObjectHelper(enumerator.Current.Value);
             }
             return result;
         }
