@@ -88,14 +88,18 @@ public partial class Util
         }
         else if (x.Type == CBORType.Integer)
         {
+#if false
             var dec = x.AsDecimal();
             if (dec >= 9223372036854775807)
                 return x.AsUInt64();
             return x.AsInt64();
+#endif
+            return x.AsDecimal();
         }
         else if (x.Type == CBORType.FloatingPoint)
         {
-            return x.AsDoubleValue();
+            //return x.AsDoubleValue();
+            return x.AsDecimal();
         }
         //Util.Print(x.Type, "x.Type");
         return null;
@@ -146,14 +150,10 @@ public partial class Util
     {
         object value = x.Value!;
         if (x.Value is null) return CBORObject.Null;
-        if (value is System.Boolean)
-        {
-            return CBORObject.FromObject((System.Boolean)value);
-        }
-        else if (value is System.Decimal)
+        if (value is System.Decimal)
         {
             var dec = (System.Decimal)value;
-            if (dec.ToString().Contains("."))
+            if ((dec % 1) != 0)
             {
                 return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
             }
@@ -170,19 +170,11 @@ public partial class Util
                 return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
             }
         }
-        else if (value is System.String)
+        else
         {
-            return CBORObject.FromObject((System.String)value);
+            return CBORObject.FromObject(value);
         }
-        else if (value is System.Byte[])
-        {
-            return CBORObject.FromObject((System.Byte[])value);
-        }
-        else if (value is System.DateTime)
-        {
-            return CBORObject.FromObject((System.DateTime)value);
-        }
-        return CBORObject.FromObject($"JValueToCborObject(): {Util.FullName(value)}");
+        //return CBORObject.FromObject($"JValueToCborObject(): {Util.FullName(value)}");
     }
 
     public static uint SessionId()
