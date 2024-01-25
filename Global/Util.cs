@@ -105,7 +105,23 @@ public partial class Util
         {
             Util.Print("<JArray>");
             var result = CBORObject.NewArray();
-            for (int i=0; i< x.Count; i++)
+            for (int i = 0; i < x.Count; i++)
+            {
+                result.Add(ToCborObjectHelper(x[i]));
+            }
+            return result;
+        }
+        else if (x is JObject)
+        {
+            Util.Print("<JObject>");
+            var result = CBORObject.NewOrderedMap();
+            var o = (x as JObject)!;
+            var enumerator = o.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                result[enumerator.Current.Key] = ToCborObjectHelper(enumerator.Current.Value);
+            }
+            for (int i = 0; i < x.Count; i++)
             {
                 result.Add(ToCborObjectHelper(x[i]));
             }
@@ -118,13 +134,25 @@ public partial class Util
     {
         object value = x.Value!;
         //return CBORObject.Null;
-        if (value is System.Decimal)
+        if (value is System.Boolean)
+        {
+            return CBORObject.FromObject((System.Boolean)value);
+        }
+        else if (value is System.Decimal)
         {
             return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
         }
-        if (value is System.String)
+        else if (value is System.String)
         {
             return CBORObject.FromObject((System.String)value);
+        }
+        else if (value is System.Byte[])
+        {
+            return CBORObject.FromObject((System.Byte[])value);
+        }
+        else if (value is System.DateTime)
+        {
+            return CBORObject.FromObject((System.DateTime)value);
         }
         return CBORObject.FromObject(Util.FullName(value));
     }
