@@ -1136,6 +1136,13 @@ public partial class Util
         return FromNewtonHelper(dyn);
     }
 
+    public static dynamic? ToObject<T>(dynamic x)
+    {
+        dynamic? o = FromObject(x);
+        if (o is null) return default(T);
+        return (T)(o.ToObject<T>());
+    }
+
     private static dynamic? FromNewtonHelper(dynamic? x)
     {
         if (x is null) return null;
