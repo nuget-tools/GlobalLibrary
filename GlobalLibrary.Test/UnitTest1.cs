@@ -1,3 +1,4 @@
+#pragma warning disable NUnit2005
 namespace GlobalLibrary.Test;
 
 using Global;

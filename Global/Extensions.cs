@@ -1,4 +1,10 @@
-﻿using GScript.Native;
+﻿#pragma warning disable CS8632
+#pragma warning disable CS0168
+#pragma warning disable CS8604
+#pragma warning disable CS8601
+#pragma warning disable CS8603
+#pragma warning disable CS8619
+using GScript.Native;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

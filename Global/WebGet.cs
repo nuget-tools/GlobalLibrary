@@ -1,4 +1,10 @@
-﻿using System;
+﻿#pragma warning disable CS8601
+#pragma warning disable CS0168
+#pragma warning disable CS8625
+#pragma warning disable CS8618
+#pragma warning disable CS8600
+#pragma warning disable CS8602
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;

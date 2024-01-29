@@ -1,3 +1,5 @@
+#pragma warning disable NUnit2005
+#pragma warning disable CS0649
 using System;
 using Global;
 using NUnit.Framework;

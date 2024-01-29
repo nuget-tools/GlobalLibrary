@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS8625
+#pragma warning disable CS8602
+using System;
 using System.IO.Compression;
 using System.IO;
 using System.Collections.Generic;

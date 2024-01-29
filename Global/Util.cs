@@ -1,4 +1,12 @@
-﻿#pragma warning disable CS0618
+﻿#pragma warning disable CS8632
+#pragma warning disable CS0618
+#pragma warning disable CS8602
+#pragma warning disable CS8601
+#pragma warning disable CS8603
+#pragma warning disable CS8600
+#pragma warning disable CS8622
+#pragma warning disable CS8604
+
 using Antlr4.Runtime;
 using System;
 using System.Globalization;
@@ -19,7 +27,9 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+#if NET462
 using PeterO.Cbor;
+#endif
 
 //using Formatting = Newtonsoft.Json.Formatting;
 
@@ -33,6 +43,36 @@ public partial class Util
     static Util()
     {
     }
+    public static void FreeHGlobal(IntPtr x)
+    {
+        Marshal.FreeHGlobal(x);
+    }
+    public static IntPtr StringToUTF16Addr(string s)
+    {
+        return Marshal.StringToHGlobalUni(s);
+    }
+    public static string UTF16AddrToString(IntPtr s)
+    {
+        return Marshal.PtrToStringUni(s);
+    }
+    public static IntPtr StringToUTF8Addr(string s)
+    {
+        int len = Encoding.UTF8.GetByteCount(s);
+        byte[] buffer = new byte[len + 1];
+        Encoding.UTF8.GetBytes(s, 0, s.Length, buffer, 0);
+        IntPtr nativeUtf8 = Marshal.AllocHGlobal(buffer.Length);
+        Marshal.Copy(buffer, 0, nativeUtf8, buffer.Length);
+        return nativeUtf8;
+    }
+    public static string UTF8AddrToString(IntPtr s)
+    {
+        int len = 0;
+        while (Marshal.ReadByte(s, len) != 0) ++len;
+        byte[] buffer = new byte[len];
+        Marshal.Copy(s, buffer, 0, buffer.Length);
+        return Encoding.UTF8.GetString(buffer);
+    }
+#if NET462
     public static dynamic? FromCbor(byte[] bytes)
     {
         var o1 = CBORObject.DecodeFromBytes(bytes);
@@ -42,7 +82,7 @@ public partial class Util
     public static byte[] ToCbor(dynamic? x)
     {
         var o1 = __ToCborObject(x);
-        var bytes = o1.ToBytes();
+        var bytes = o1.EncodeToBytes();
         return bytes;
     }
     public static dynamic? __FromCborObject(CBORObject? x)
@@ -143,8 +183,9 @@ public partial class Util
             }
             return result;
         }
-        Util.Print(Util.FullName(x));
-        return CBORObject.FromObject($"ToCborObject(): {Util.FullName(x)}");
+        //Util.Print(Util.FullName(x));
+        //return CBORObject.FromObject($"ToCborObject(): {Util.FullName(x)}");
+        return ValueToCborObject(x);
     }
     private static CBORObject? JValueToCborObject(JValue x)
     {
@@ -176,7 +217,35 @@ public partial class Util
         }
         //return CBORObject.FromObject($"JValueToCborObject(): {Util.FullName(value)}");
     }
-
+    private static CBORObject? ValueToCborObject(object? value)
+    {
+        if (value is null) return CBORObject.Null;
+        if (value is System.Decimal)
+        {
+            var dec = (System.Decimal)value;
+            if ((dec % 1) != 0)
+            {
+                return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
+            }
+            else
+            {
+                if (dec >= -9223372036854775808 && dec <= 9223372036854775807)
+                {
+                    return CBORObject.FromObject((long)dec);
+                }
+                else if (dec >= 9223372036854775808 && dec <= 18446744073709551615)
+                {
+                    return CBORObject.FromObject((ulong)dec);
+                }
+                return CBORObject.FromObject(decimal.ToDouble((System.Decimal)value));
+            }
+        }
+        else
+        {
+            return CBORObject.FromObject(value);
+        }
+    }
+#endif
     public static uint SessionId()
     {
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
