@@ -47,11 +47,11 @@ public partial class Util
     {
         Marshal.FreeHGlobal(x);
     }
-    public static IntPtr StringToUTF16Addr(string s)
+    public static IntPtr StringToWideAddr(string s)
     {
         return Marshal.StringToHGlobalUni(s);
     }
-    public static string UTF16AddrToString(IntPtr s)
+    public static string WideAddrToString(IntPtr s)
     {
         return Marshal.PtrToStringUni(s);
     }
