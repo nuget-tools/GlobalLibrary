@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Global;
 
@@ -31,19 +32,27 @@ public class JsonAPI
         Marshal.FreeHGlobal(pArgsJson);
         return Util.FromJson(result);
     }
+    static ThreadLocal<IntPtr> HandleCallPtr = new ThreadLocal<IntPtr>();
     public IntPtr HandleCall(Type apiType, IntPtr nameAddr, IntPtr inputAddr)
     {
+        if (HandleCallPtr.Value != IntPtr.Zero)
+        {
+            Util.FreeHGlobal(HandleCallPtr.Value);
+            HandleCallPtr.Value = IntPtr.Zero;
+        }
         var name = Util.UTF8AddrToString(nameAddr);
         var input = Util.UTF8AddrToString(inputAddr);
         var args = Util.FromJson(input);
-        MethodInfo TestMethod1 = apiType.GetMethod(name);
+        MethodInfo mi = apiType.GetMethod(name);
         dynamic result = null;
-        if (TestMethod1 != null)
+        if (mi != null)
         {
-            result = TestMethod1.Invoke(null, new object[] { args });
+            result = mi.Invoke(null, new object[] { args });
         }
         var output = Util.ToJson(result);
-        return Util.StringToUTF8Addr((output));
+        HandleCallPtr.Value = Util.StringToWideAddr(output);
+        return HandleCallPtr.Value;
+        //return Util.StringToUTF8Addr((output));
     }
     [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern IntPtr LoadLibraryW(string lpFileName);
