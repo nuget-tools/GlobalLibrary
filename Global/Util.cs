@@ -27,6 +27,8 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Esprima.Ast;
+
 #if NET462
 using PeterO.Cbor;
 #endif
@@ -42,6 +44,13 @@ public partial class Util
 {
     static Util()
     {
+    }
+    public static string AssemblyDirectory(Assembly assembly)
+    {
+        string codeBase = assembly.CodeBase;
+        UriBuilder uri = new UriBuilder(codeBase);
+        string path = Uri.UnescapeDataString(uri.Path);
+        return Path.GetDirectoryName(path);
     }
     public static void FreeHGlobal(IntPtr x)
     {
