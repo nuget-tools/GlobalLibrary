@@ -50,7 +50,7 @@ public class JsonAPI
             result = mi.Invoke(null, new object[] { args });
         }
         var output = Util.ToJson(result);
-        HandleCallPtr.Value = Util.StringToWideAddr(output);
+        HandleCallPtr.Value = Util.StringToUTF8Addr(output);
         return HandleCallPtr.Value;
         //return Util.StringToUTF8Addr((output));
     }
