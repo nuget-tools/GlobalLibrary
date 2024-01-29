@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
 		<TargetFrameworks>net462;net6.0</TargetFrameworks>
-		<Version>2024.0130.0339.27</Version>
+		<Version>2024.0130.0732.47</Version>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<NoWarn>3021,0618</NoWarn>

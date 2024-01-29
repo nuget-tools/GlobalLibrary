@@ -32,6 +32,12 @@ public class JsonAPI
         Marshal.FreeHGlobal(pArgsJson);
         return Util.FromJson(result);
     }
+    public dynamic CallOne(dynamic name, dynamic args)
+    {
+        var result = Call(name, args);
+        if (result is null) return null;
+        return result[0];
+    }
     static ThreadLocal<IntPtr> HandleCallPtr = new ThreadLocal<IntPtr>();
     public IntPtr HandleCall(Type apiType, IntPtr nameAddr, IntPtr inputAddr)
     {
