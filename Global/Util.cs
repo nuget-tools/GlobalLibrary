@@ -1090,11 +1090,23 @@ public partial class Util
             }
             else
             {
-                Util.Log(s, title);
+                Log(s, title);
             }
             return;
         }
 
+        {
+            var s = ToString(x);
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                NativeMethods.MessageBoxW(IntPtr.Zero, s, title, 0);
+            }
+            else
+            {
+                Log(s, title);
+            }
+        }
+        /*
         if (FullName(x) == "System.Xml.Linq.XDocument" ||
             FullName(x) == "System.Xml.Linq.XElement")
         {
@@ -1107,7 +1119,7 @@ public partial class Util
             }
             else
             {
-                Util.Log(xml, title);
+                Tool.Log(xml, title);
             }
         }
         else
@@ -1119,9 +1131,10 @@ public partial class Util
             }
             else
             {
-                Util.Log(json, title);
+                Tool.Log(json, title);
             }
         }
+        */
     }
 
     public static dynamic? FromNewton(dynamic x)

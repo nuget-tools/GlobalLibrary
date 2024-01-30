@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -65,3 +66,4 @@ public class JsonAPI
     [DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = false)]
     internal static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 }
+*/
